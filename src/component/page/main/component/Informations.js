@@ -12,6 +12,7 @@ const Informations = () => {
 
   const database = useSelector(({ database }) => database.countries);
   const { countries } = useSelector(({ show }) => show);
+  const { keyword } = useSelector(({ search }) => search);
 
   useEffect(() => {
     if (database.length > 0) {
@@ -19,11 +20,16 @@ const Informations = () => {
     }
   }, [database]);
 
+  // useEffect(() => {
+  //   searchData();
+  // }, [keyword]);
+
   // database 에서 offset만큼 countries에 넣어줌
   const loadData = () => {
     console.log('INFORMATION load data called');
     dispatch(databaseActions.loadCountries());
   };
+
   const load = _.throttle(() => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
@@ -44,10 +50,22 @@ const Informations = () => {
 
   return (
     <div>
-      {countries.length > 0 &&
-        countries.map(country => (
-          <Information country={country} key={country.name} />
-        ))}
+      {countries.length > 0 && keyword.length > 0 ? (
+        <div>
+          <span>검색중 입니다</span>
+          <div>
+            {countries.map(idx => (
+              <Information country={database[idx]} key={idx} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>
+          {countries.map(idx => (
+            <Information country={database[idx]} key={idx} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
