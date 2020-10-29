@@ -86,7 +86,7 @@ const AddNew = () => {
         v={countryData.callingCodes}
         pattern={regex.regexOnlyNumber}
       />
-      <input type="submit" />
+      <input className="add-new__submit" type="submit" />
     </form>
   );
 };
