@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
 
+import '../../../../styles/information.scss';
+
 const Information = ({ country }) => {
   const dispatch = useDispatch();
 
@@ -14,14 +16,14 @@ const Information = ({ country }) => {
   };
 
   return (
-    <ul>
-      <li>{name}</li>
-      <li>{alpha2Code}</li>
-      <li>{capital}</li>
-      <li>{region}</li>
-      <li>{callingCodes}</li>
-      <li>
-        <button onClick={handleRemove}>삭제</button>
+    <ul className="information">
+      <li className="information__item">{name}</li>
+      <li className="information__item">{alpha2Code}</li>
+      <li className="information__item">{capital}</li>
+      <li className="information__item">{region}</li>
+      <li className="information__item">{callingCodes}</li>
+      <li onClick={handleRemove} className="information__item button">
+        🗑
       </li>
     </ul>
   );

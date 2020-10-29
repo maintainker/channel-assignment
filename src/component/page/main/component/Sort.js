@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
 
+import '../../../../styles/sort.scss';
+
 const Item = ({ text, sortStatus, name }) => {
   const dispatch = useDispatch();
 
@@ -16,8 +18,8 @@ const Item = ({ text, sortStatus, name }) => {
   };
 
   return (
-    <button onClick={handleSort}>
-      {text} {sortStatus === 'asc' ? '내림차순으로' : '오름차순으로'}
+    <button className="sort__item" onClick={handleSort}>
+      {text} {sortStatus === 'asc' ? '⬇️' : '⬆️'}
     </button>
   );
 };
@@ -27,7 +29,7 @@ const Sort = () => {
   const { name, alpha2Code, capital, region, callingCodes } = sort;
 
   return (
-    <div>
+    <div className="sort">
       <Item text="name" name="name" sortStatus={name} />
       <Item text="alpha 2 code" name="alpha2Code" sortStatus={alpha2Code} />
       <Item text="capital" name="capital" sortStatus={capital} />

@@ -5,6 +5,8 @@ import _ from 'lodash';
 import Information from './Information';
 import { databaseActions } from '../../../../module/database';
 
+import '../../../../styles/informations.scss';
+
 const Informations = () => {
   const dispatch = useDispatch();
 
@@ -42,7 +44,7 @@ const Informations = () => {
   }, []);
 
   return (
-    <div>
+    <div className="informations">
       {countries.length > 0 && (
         <div>
           {countries.map(
