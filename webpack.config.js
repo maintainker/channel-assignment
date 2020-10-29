@@ -42,8 +42,8 @@ module.exports = {
       minify:
         process.env.NODE_ENV === 'production'
           ? {
-              removeComments: true,
-              collapseWhitespace: true,
+              // removeComments: true,
+              // collapseWhitespace: true,
             }
           : false,
     }),
