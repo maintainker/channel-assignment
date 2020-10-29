@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
@@ -6,7 +6,7 @@ import { regex } from '../../../../lib/utils';
 
 import '../../../../styles/add-new.scss';
 
-const Item = ({ name, onChange, v, pattern }) => {
+const Item = memo(({ name, onChange, v, pattern }) => {
   return (
     <input
       className="add-new__input"
@@ -19,9 +19,9 @@ const Item = ({ name, onChange, v, pattern }) => {
       value={v}
     />
   );
-};
+});
 
-const AddNew = () => {
+const AddNew = memo(() => {
   const dispatch = useDispatch();
 
   const [countryData, setCountryData] = useState({
@@ -89,6 +89,6 @@ const AddNew = () => {
       <input className="add-new__submit" type="submit" />
     </form>
   );
-};
+});
 
 export default AddNew;

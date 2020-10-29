@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 
@@ -7,7 +7,7 @@ import { databaseActions } from '../../../../module/database';
 
 import '../../../../styles/informations.scss';
 
-const Informations = () => {
+const Informations = memo(() => {
   const dispatch = useDispatch();
 
   const database = useSelector(({ database }) => database.countries);
@@ -55,6 +55,6 @@ const Informations = () => {
       )}
     </div>
   );
-};
+});
 
 export default Informations;

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
 
 import '../../../../styles/information.scss';
 
-const Information = ({ country }) => {
+const Information = memo(({ country }) => {
   const dispatch = useDispatch();
 
   const { name, alpha2Code, capital, region, callingCodes, id } = country;
@@ -27,6 +27,6 @@ const Information = ({ country }) => {
       </li>
     </ul>
   );
-};
+});
 
 export default Information;

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
 
 import '../../../../styles/sort.scss';
 
-const Item = ({ text, sortStatus, name }) => {
+const Item = memo(({ text, sortStatus, name }) => {
   const dispatch = useDispatch();
 
   /* event 함수 */
@@ -22,9 +22,9 @@ const Item = ({ text, sortStatus, name }) => {
       {text} {sortStatus === 'asc' ? '⬇️' : '⬆️'}
     </button>
   );
-};
+});
 
-const Sort = () => {
+const Sort = memo(() => {
   const { sort } = useSelector(({ database }) => database);
   const { name, alpha2Code, capital, region, callingCodes } = sort;
 
@@ -41,6 +41,6 @@ const Sort = () => {
       />
     </div>
   );
-};
+});
 
 export default Sort;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import _ from 'lodash';
 
@@ -7,7 +7,7 @@ import { searchActions } from '../../../../module/search';
 import { showActions } from '../../../../module/show';
 import { databaseActions } from '../../../../module/database';
 
-const Search = () => {
+const Search = memo(() => {
   const dispatch = useDispatch();
 
   const { keyword } = useSelector(({ search }) => search);
@@ -95,6 +95,6 @@ const Search = () => {
       />
     </form>
   );
-};
+});
 
 export default Search;

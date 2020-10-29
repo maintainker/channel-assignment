@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { memo } from 'react';
 
 import AddNew from './component/AddNew';
 import Sort from './component/Sort';
@@ -8,7 +8,7 @@ import Search from './component/Search';
 import '../../../styles/main-page.scss';
 import '../../../styles/search.scss';
 
-const MainPage = () => {
+const MainPage = memo(() => {
   return (
     <div className="container">
       <div className="container__area" />
@@ -23,6 +23,6 @@ const MainPage = () => {
       </div>
     </div>
   );
-};
+});
 
 export default MainPage;
