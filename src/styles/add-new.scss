@@ -1,0 +1,12 @@
+.add-new {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 0.5rem;
+
+  .add-new__input {
+    width: 100%;
+    height: 2rem;
+    margin-right: 0.5rem;
+    text-align: center;
+  }
+}

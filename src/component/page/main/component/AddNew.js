@@ -4,9 +4,12 @@ import { useDispatch } from 'react-redux';
 import { databaseActions } from '../../../../module/database';
 import { regex } from '../../../../lib/utils';
 
+import '../../../../styles/add-new.scss';
+
 const Item = ({ name, onChange, v, pattern }) => {
   return (
     <input
+      className="add-new__input"
       type="text"
       required
       name={name}
@@ -52,7 +55,7 @@ const AddNew = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="add-new" onSubmit={handleSubmit}>
       <Item
         name="name"
         onChange={handleCountryData}

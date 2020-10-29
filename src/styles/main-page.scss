@@ -1,0 +1,17 @@
+.container {
+  .container__area {
+    height: 8.5rem;
+  }
+  .container__menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 8.5rem;
+    width: 100%;
+    background-color: rgba(white, 0.9);
+    box-shadow: 0px 0px 20px gray;
+  }
+  .container__informations {
+    margin-top: 1rem;
+  }
+}

@@ -86,8 +86,13 @@ const Search = () => {
   }, [keyword]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input onChange={handleTarget} value={target} type="text" />
+    <form className="search__form" onSubmit={handleSubmit}>
+      <input
+        className="search__input"
+        onChange={handleTarget}
+        value={target}
+        type="text"
+      />
     </form>
   );
 };
