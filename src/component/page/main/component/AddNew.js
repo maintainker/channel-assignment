@@ -2,6 +2,21 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
+import { regex } from '../../../../lib/utils';
+
+const Item = ({ name, onChange, v, pattern }) => {
+  return (
+    <input
+      type="text"
+      required
+      name={name}
+      placeholder={name}
+      onChange={onChange}
+      pattern={pattern}
+      value={v}
+    />
+  );
+};
 
 const AddNew = () => {
   const dispatch = useDispatch();
@@ -14,6 +29,7 @@ const AddNew = () => {
     callingCodes: [],
   });
 
+  /* event */
   const handleSubmit = e => {
     e.preventDefault();
     dispatch(databaseActions.add(countryData));
@@ -37,45 +53,35 @@ const AddNew = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        onChange={handleCountryData}
+      <Item
         name="name"
-        value={countryData.name}
-        placeholder="name"
-        required
-      />
-      <input
-        type="text"
         onChange={handleCountryData}
+        v={countryData.name}
+        pattern={regex.regexOnlyString}
+      />
+      <Item
         name="alpha2Code"
-        value={countryData.alpha2Code}
-        placeholder="alpha2Code"
-        required
-      />
-      <input
-        type="text"
         onChange={handleCountryData}
+        v={countryData.alpha2Code}
+        pattern={regex.regexOnly2Char}
+      />
+      <Item
         name="capital"
-        value={countryData.capital}
-        placeholder="capital"
-        required
-      />
-      <input
-        type="text"
         onChange={handleCountryData}
+        v={countryData.capital}
+        pattern={regex.regexOnlyString}
+      />
+      <Item
         name="region"
-        value={countryData.region}
-        placeholder="region"
-        required
-      />
-      <input
-        type="text"
         onChange={handleCountryData}
+        v={countryData.region}
+        pattern={regex.regexOnlyString}
+      />
+      <Item
         name="callingCodes"
-        value={countryData.callingCodes}
-        placeholder="callingCodes"
-        required
+        onChange={handleCountryData}
+        v={countryData.callingCodes}
+        pattern={regex.regexOnlyNumber}
       />
       <input type="submit" />
     </form>

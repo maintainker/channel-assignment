@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import _ from 'lodash';
 
+import { regex } from '../../../../lib/utils';
 import { searchActions } from '../../../../module/search';
 import { showActions } from '../../../../module/show';
 import { databaseActions } from '../../../../module/database';
@@ -9,22 +10,27 @@ import { databaseActions } from '../../../../module/database';
 const Search = () => {
   const dispatch = useDispatch();
 
-  const [target, setTarget] = useState('');
+  const { keyword } = useSelector(({ search }) => search);
   const database = useSelector(({ database }) => database.countries);
   const { totalLength } = useSelector(({ database }) => database);
-  const { keyword } = useSelector(({ search }) => search);
+  const [target, setTarget] = useState('');
 
+  /* 일반 함수 */
+  // keyword로 검색하는 함수
+  // 모두 문자인 경우는 calling codes를 제외하고 검색을,
+  // 모두 숫자인 경우는 calling codes만 검색함
+  // 그리고 둘이 섞인 경우에는 검색 안함
   const searchData = keyword => {
     const searchResult = new Set();
-    console.log('검색합니다: ', keyword);
-    console.log('searchData database:', database);
 
-    const regexOnlyNumber = /^[0-9]*$/g;
-    const regexOnlyString = /^[a-z]*$/g;
+    const regexOnlyNumber = new RegExp(regex.regexOnlyNumber, 'g');
+    const regexOnlyString = new RegExp(regex.regexOnlyString, 'g');
 
+    // 모두 숫자인 경우 (calling codes 만)
     if (regexOnlyNumber.test(keyword)) {
       for (let i = 0; i < totalLength; i++) {
         const { callingCodes, id } = database[i];
+
         callingCodes.forEach(callingCode => {
           if (callingCode.includes(keyword)) {
             searchResult.add(id);
@@ -33,9 +39,11 @@ const Search = () => {
       }
     }
 
+    // 모두 문자인 경우 (calling codes 외)
     if (regexOnlyString.test(keyword)) {
       for (let i = 0; i < totalLength; i++) {
         const { name, alpha2Code, capital, region, id } = database[i];
+
         if (
           name.toLowerCase().includes(keyword) ||
           alpha2Code.toLowerCase().includes(keyword) ||
@@ -47,31 +55,17 @@ const Search = () => {
       }
     }
 
-    // show -> countries 에 data에서해당하는 값만을 담아주기
-    // 대소문자 무시
-    // 통합 검색
-    // 모두 숫자면 -> callingCodes
-    // 문자와 숫자가 섞여있다면 -> X
-    // 모두 문자면 -> callingCodes 제외하고
-    console.log(searchResult);
     dispatch(showActions.setCountries([...searchResult]));
   };
 
+  // 화면에 보여주는 데이터인 countries(show) 를
+  // 다시 되돌려주는 함수
+  // 왜냐하면, 검색이 다 끝났으니 이전 상태로 돌려줘야 하기 때문임
   const rollBack = () => {
-    console.log('되돌립니다');
     dispatch(databaseActions.rollback());
   };
 
-  useEffect(() => {
-    if (keyword.length > 0) {
-      console.log('SEARCH,', keyword);
-      searchData(keyword);
-    } else {
-      console.log('SEARCH, 검색할 키워드 없음');
-      rollBack();
-    }
-  }, [keyword]);
-
+  /* event 함수 */
   const handleTarget = e => {
     const innerText = e.target.value;
     dispatch(searchActions.setKeyword(innerText));
@@ -80,8 +74,16 @@ const Search = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // dispatch(searchActions.setIsActive(false));
   };
+
+  /* life cycle */
+  useEffect(() => {
+    if (keyword.length > 0) {
+      searchData(keyword);
+    } else {
+      rollBack();
+    }
+  }, [keyword]);
 
   return (
     <form onSubmit={handleSubmit}>

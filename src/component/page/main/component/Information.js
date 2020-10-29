@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { databaseActions } from '../../../../module/database';
@@ -7,10 +7,12 @@ const Information = ({ country }) => {
   const dispatch = useDispatch();
 
   const { name, alpha2Code, capital, region, callingCodes, id } = country;
+
+  /* event 함수 */
   const handleRemove = () => {
-    console.log(`${id}, ${name} 삭제`);
     dispatch(databaseActions.remove(id));
   };
+
   return (
     <ul>
       <li>{name}</li>

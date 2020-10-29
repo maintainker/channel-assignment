@@ -10,16 +10,10 @@ const Informations = () => {
 
   const database = useSelector(({ database }) => database.countries);
   const { countries } = useSelector(({ show }) => show);
-  const { keyword } = useSelector(({ search }) => search);
-  const [isSearching, setIsSearching] = useState(false);
 
-  useEffect(() => {
-    if (database.length > 0) {
-      loadData();
-    }
-  }, []);
-
-  // database 에서 offset만큼 countries에 넣어줌
+  /* event 함수 */
+  // offset 만큼 화면에 보여주도록 하는 함수
+  // database(countries) => show(countries)
   const loadData = () => {
     dispatch(databaseActions.loadCountries());
   };
@@ -32,6 +26,13 @@ const Informations = () => {
   }, 300);
 
   const handleScroll = () => load();
+
+  /* life cycle */
+  useEffect(() => {
+    if (database.length > 0) {
+      loadData();
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);

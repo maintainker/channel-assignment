@@ -6,6 +6,7 @@ import { databaseActions } from '../../../../module/database';
 const Item = ({ text, sortStatus, name }) => {
   const dispatch = useDispatch();
 
+  /* event 함수 */
   const handleSort = () => {
     dispatch(
       databaseActions.setSortStatus({
