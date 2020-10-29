@@ -13,6 +13,14 @@ const initialState = {
   nextId: 0,
   prevLastId: -1,
   totalLength: 0,
+  sort: {
+    // asc, desc
+    name: 'asc',
+    alpha2Code: 'asc',
+    capital: 'asc',
+    region: 'asc',
+    callingCodes: 'asc',
+  },
 };
 
 // action type
@@ -39,6 +47,10 @@ const REMOVE_SUCCESS = 'database/REMOVE_SUCCESS';
 const ADD = 'database/ADD';
 const ADD_SUCCESS = 'database/ADD_SUCCESS';
 
+//... sort
+const SET_SORT_STATUS = 'database/SET_SORT_STATUS';
+const SET_SORT_STATUS_SUCCESS = 'database/SET_SORT_STATUS_SUCCESS';
+
 // action creator
 export const databaseActions = {
   setCountries: createAction(SET_COUNTRIES_REQUEST),
@@ -47,6 +59,7 @@ export const databaseActions = {
   rollback: createAction(ROLLBACK),
   remove: createAction(REMOVE),
   add: createAction(ADD),
+  setSortStatus: createAction(SET_SORT_STATUS),
 };
 
 const addSuccess = createAction(ADD_SUCCESS);
@@ -54,8 +67,47 @@ const loadCountriesSuccess = createAction(LOAD_COUNTRIES_SUCCESS);
 const countriesSuccess = createAction(SET_COUNTRIES_SUCCESS);
 const addCountryInSaga = createAction(ADD_COUNTRY_IN_SAGA);
 const removeSuccess = createAction(REMOVE_SUCCESS);
+const setSortStatusSuccess = createAction(SET_SORT_STATUS_SUCCESS);
 
 // saga
+function* setSortStatusSaga(action) {
+  const countries = yield select(selectors.getCountries);
+
+  const key = Object.keys(action.payload)[0];
+  const sortDirection = action.payload[key];
+
+  if (sortDirection === 'asc') {
+    countries.sort((c1, c2) =>
+      c1[key] < c2[key] ? -1 : c1[key] > c2[key] ? 1 : 0
+    );
+    yield put(
+      setSortStatusSuccess({
+        sort: {
+          [key]: 'desc',
+        },
+        countries,
+      })
+    );
+  } else {
+    countries.sort((c1, c2) =>
+      c1[key] < c2[key] ? 1 : c1[key] > c2[key] ? -1 : 0
+    );
+    yield put(
+      setSortStatusSuccess({
+        sort: {
+          [key]: 'asc',
+        },
+        countries,
+      })
+    );
+  }
+
+  // show도 update
+  const showList = [];
+  for (let i = 0; i < OFFSET; i++) showList.push(i);
+  yield put(showActions.setCountries(showList));
+}
+
 function* addSaga(action) {
   const { payload } = action;
   const subtract = (arr1, arr2) => arr2.filter(n => !arr1.includes(n));
@@ -159,11 +211,29 @@ export function* databaseSaga(action) {
   yield takeLatest(ROLLBACK, rollbackSaga);
   yield takeLatest(REMOVE, removeSaga);
   yield takeLatest(ADD, addSaga);
+  yield takeLatest(SET_SORT_STATUS, setSortStatusSaga);
 }
 
 // reducer
 const databaseReducer = handleActions(
   {
+    [SET_SORT_STATUS_SUCCESS]: (prevState, action) => {
+      const { countries, sort } = action.payload;
+      const key = Object.keys(sort)[0];
+      const sortDirection = sort[key];
+
+      return {
+        ...prevState,
+        countries,
+        sort: {
+          ...prevState.sort,
+          [key]: sortDirection,
+        },
+        prevLastId: OFFSET,
+        nextId: OFFSET + 1,
+        totalLength: countries.length,
+      };
+    },
     [ADD_SUCCESS]: (prevState, action) => ({
       ...prevState,
       countries: [...prevState.countries, action.payload],
