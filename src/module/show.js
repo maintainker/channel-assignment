@@ -1,5 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 
+// initial state
 const initialState = {
   countries: [],
 };
@@ -15,8 +16,6 @@ export const showActions = {
   setCountries: createAction(SET_COUNTRIES),
   remove: createAction(REMOVE),
 };
-
-// saga
 
 // reducer
 const showReducer = handleActions(
@@ -36,20 +35,5 @@ const showReducer = handleActions(
   },
   initialState
 );
-// const showReducer = handleActions(
-// {},
-// {
-//   [APPEND_COUNTRIES]: (prevState, action) => ({
-//     ...prevState,
-//     countries: [...prevState.countries, action.payload],
-//   }),
-
-//   [SET_COUNTRIES]: (prevState, action) => ({
-//     ...prevState,
-//     countries: action.payload,
-//   }),
-// },
-//   initialState
-// );
 
 export default showReducer;
