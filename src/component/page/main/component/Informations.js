@@ -50,20 +50,12 @@ const Informations = () => {
 
   return (
     <div>
-      {countries.length > 0 && keyword.length > 0 ? (
+      {countries.length > 0 && (
         <div>
-          <span>검색중 입니다</span>
-          <div>
-            {countries.map(idx => (
-              <Information country={database[idx]} key={idx} />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div>
-          {countries.map(idx => (
-            <Information country={database[idx]} key={idx} />
-          ))}
+          {countries.map(
+            idx =>
+              database[idx] && <Information country={database[idx]} key={idx} />
+          )}
         </div>
       )}
     </div>
