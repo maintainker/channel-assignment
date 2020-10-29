@@ -35,6 +35,10 @@ const ROLLBACK = 'database/ROLLBACK';
 const REMOVE = 'database/REMOVE';
 const REMOVE_SUCCESS = 'database/REMOVE_SUCCESS';
 
+//.. add
+const ADD = 'database/ADD';
+const ADD_SUCCESS = 'database/ADD_SUCCESS';
+
 // action creator
 export const databaseActions = {
   setCountries: createAction(SET_COUNTRIES_REQUEST),
@@ -42,13 +46,47 @@ export const databaseActions = {
   loadCountries: createAction(LOAD_COUNTRIES_REQUEST),
   rollback: createAction(ROLLBACK),
   remove: createAction(REMOVE),
+  add: createAction(ADD),
 };
+
+const addSuccess = createAction(ADD_SUCCESS);
 const loadCountriesSuccess = createAction(LOAD_COUNTRIES_SUCCESS);
 const countriesSuccess = createAction(SET_COUNTRIES_SUCCESS);
 const addCountryInSaga = createAction(ADD_COUNTRY_IN_SAGA);
 const removeSuccess = createAction(REMOVE_SUCCESS);
 
 // saga
+function* addSaga(action) {
+  const { payload } = action;
+  const subtract = (arr1, arr2) => arr2.filter(n => !arr1.includes(n));
+
+  const countries = yield select(selectors.getCountries);
+  const totalLength = yield select(selectors.getTotalLength);
+  let isValidAdd = true;
+
+  for (let i = 0; i < totalLength; i++) {
+    const { name, alpha2Code, capital, region, callingCodes } = countries[i];
+    if (
+      name.toLowerCase() === payload.name.toLowerCase() ||
+      alpha2Code.toLowerCase() === payload.alpha2Code.toLowerCase() ||
+      capital.toLowerCase() === payload.capital.toLowerCase() ||
+      region.toLowerCase() === payload.region.toLowerCase() ||
+      payload.callingCodes.length >
+        subtract(callingCodes, payload.callingCodes).length
+    ) {
+      alert('이미 있는 정보입니다');
+      isValidAdd = false;
+      break;
+    }
+  }
+
+  if (isValidAdd) {
+    alert('성공적으로 추가하였습니다');
+    action.payload.id = totalLength;
+    yield put(addSuccess(action.payload));
+  }
+}
+
 function* removeSaga(action) {
   yield put(removeSuccess(action.payload));
   yield put(showActions.remove(action.payload));
@@ -120,11 +158,17 @@ export function* databaseSaga(action) {
   yield takeLatest(LOAD_COUNTRIES_REQUEST, loadCountriesSaga);
   yield takeLatest(ROLLBACK, rollbackSaga);
   yield takeLatest(REMOVE, removeSaga);
+  yield takeLatest(ADD, addSaga);
 }
 
 // reducer
 const databaseReducer = handleActions(
   {
+    [ADD_SUCCESS]: (prevState, action) => ({
+      ...prevState,
+      countries: [...prevState.countries, action.payload],
+      totalLength: prevState.totalLength + 1,
+    }),
     [REMOVE_SUCCESS]: (prevState, action) => ({
       ...prevState,
       totalLength: prevState.totalLength - 1,
