@@ -31,18 +31,29 @@ const LOAD_COUNTRIES_SUCCESS = 'database/LOAD_COUNTRIES_SUCCESS';
 //.. rollback
 const ROLLBACK = 'database/ROLLBACK';
 
+//.. remove
+const REMOVE = 'database/REMOVE';
+const REMOVE_SUCCESS = 'database/REMOVE_SUCCESS';
+
 // action creator
 export const databaseActions = {
   setCountries: createAction(SET_COUNTRIES_REQUEST),
   addCountry: createAction(ADD_COUNTRY),
   loadCountries: createAction(LOAD_COUNTRIES_REQUEST),
   rollback: createAction(ROLLBACK),
+  remove: createAction(REMOVE),
 };
 const loadCountriesSuccess = createAction(LOAD_COUNTRIES_SUCCESS);
 const countriesSuccess = createAction(SET_COUNTRIES_SUCCESS);
 const addCountryInSaga = createAction(ADD_COUNTRY_IN_SAGA);
+const removeSuccess = createAction(REMOVE_SUCCESS);
 
 // saga
+function* removeSaga(action) {
+  yield put(removeSuccess(action.payload));
+  yield put(showActions.remove(action.payload));
+}
+
 function* rollbackSaga(action) {
   console.log('rollback합니다');
   const prevNextId = yield select(selectors.getNextId);
@@ -108,11 +119,19 @@ export function* databaseSaga(action) {
   yield takeLatest(ADD_COUNTRY, addCountrySaga);
   yield takeLatest(LOAD_COUNTRIES_REQUEST, loadCountriesSaga);
   yield takeLatest(ROLLBACK, rollbackSaga);
+  yield takeLatest(REMOVE, removeSaga);
 }
 
 // reducer
 const databaseReducer = handleActions(
   {
+    [REMOVE_SUCCESS]: (prevState, action) => ({
+      ...prevState,
+      totalLength: prevState.totalLength - 1,
+      countries: prevState.countries.filter(
+        country => action.payload !== country.id
+      ),
+    }),
     [LOAD_COUNTRIES_SUCCESS]: (prevState, action) => ({
       ...prevState,
       nextId: action.payload,
