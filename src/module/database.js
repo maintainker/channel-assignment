@@ -28,17 +28,33 @@ const ADD_COUNTRY_IN_SAGA = 'database/ADD_COUNTRY_IN_SAGA';
 const LOAD_COUNTRIES_REQUEST = 'database/LOAD_COUNTRIES_REQUEST';
 const LOAD_COUNTRIES_SUCCESS = 'database/LOAD_COUNTRIES_SUCCESS';
 
+//.. rollback
+const ROLLBACK = 'database/ROLLBACK';
+
 // action creator
 export const databaseActions = {
   setCountries: createAction(SET_COUNTRIES_REQUEST),
   addCountry: createAction(ADD_COUNTRY),
   loadCountries: createAction(LOAD_COUNTRIES_REQUEST),
+  rollback: createAction(ROLLBACK),
 };
 const loadCountriesSuccess = createAction(LOAD_COUNTRIES_SUCCESS);
 const countriesSuccess = createAction(SET_COUNTRIES_SUCCESS);
 const addCountryInSaga = createAction(ADD_COUNTRY_IN_SAGA);
 
 // saga
+function* rollbackSaga(action) {
+  console.log('rollback합니다');
+  const prevNextId = yield select(selectors.getNextId);
+
+  const list = [];
+  for (let i = 0; i < prevNextId; i++) {
+    list.push(i);
+  }
+
+  yield put(showActions.setCountries(list));
+}
+
 function* loadCountriesSaga(action) {
   console.log('loadCountriesSaga called');
   const totalLength = yield select(selectors.getTotalLength);
@@ -49,7 +65,11 @@ function* loadCountriesSaga(action) {
 
   const limit = Math.min(prevNextId + OFFSET, totalLength);
   // const list = countries.slice(prevNextId, prevNextId + OFFSET);
-  const list = countries.slice(prevNextId, limit);
+  // const list = countries.slice(prevNextId, limit);
+  const list = [];
+  for (let i = prevNextId; i < limit; i++) {
+    list.push(i);
+  }
 
   // yield put(loadCountriesSuccess(prevNextId + OFFSET)); // prevLastId음..필요할까?
   yield put(loadCountriesSuccess(limit)); // prevLastId음..필요할까?
@@ -60,9 +80,16 @@ function* loadCountriesSaga(action) {
 function* setCountriesSaga(action) {
   console.log('setCountriesSaga called');
   const { data } = yield call(countryApi.get);
+  const { length } = data;
+  for (let i = 0; i < length; i++) {
+    data[i].id = i;
+  }
   yield put(countriesSuccess(data));
-  yield put(showActions.setCountries(data.slice(0, 20)));
+
   // show의 countries 초기화
+  const showList = [];
+  for (let i = 0; i < OFFSET; i++) showList.push(i);
+  yield put(showActions.setCountries(showList));
 }
 
 // 새로운 나라 정보를 추가하는 [addCountry]가 호출되었을 때 불리는 saga
@@ -80,6 +107,7 @@ export function* databaseSaga(action) {
   yield takeLatest(SET_COUNTRIES_REQUEST, setCountriesSaga);
   yield takeLatest(ADD_COUNTRY, addCountrySaga);
   yield takeLatest(LOAD_COUNTRIES_REQUEST, loadCountriesSaga);
+  yield takeLatest(ROLLBACK, rollbackSaga);
 }
 
 // reducer
