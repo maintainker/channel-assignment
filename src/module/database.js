@@ -158,23 +158,27 @@ function* rollbackSaga(action) {
 
 function* loadCountriesSaga(action) {
   console.log('loadCountriesSaga called');
-  const totalLength = yield select(selectors.getTotalLength);
-  const countries = yield select(selectors.getCountries);
-  const prevNextId = yield select(selectors.getNextId);
-  // const prevLastId = yield select(selectors.getPrevLastId);
-  // console.log('prevLastId:', prevLastId);
+  const isSearching = yield select(selectors.getIsSearching);
 
-  const limit = Math.min(prevNextId + OFFSET, totalLength);
-  // const list = countries.slice(prevNextId, prevNextId + OFFSET);
-  // const list = countries.slice(prevNextId, limit);
-  const list = [];
-  for (let i = prevNextId; i < limit; i++) {
-    list.push(i);
+  if (!isSearching) {
+    const totalLength = yield select(selectors.getTotalLength);
+    const countries = yield select(selectors.getCountries);
+    const prevNextId = yield select(selectors.getNextId);
+    // const prevLastId = yield select(selectors.getPrevLastId);
+    // console.log('prevLastId:', prevLastId);
+
+    const limit = Math.min(prevNextId + OFFSET, totalLength);
+    // const list = countries.slice(prevNextId, prevNextId + OFFSET);
+    // const list = countries.slice(prevNextId, limit);
+    const list = [];
+    for (let i = prevNextId; i < limit; i++) {
+      list.push(i);
+    }
+
+    // yield put(loadCountriesSuccess(prevNextId + OFFSET)); // prevLastId음..필요할까?
+    yield put(loadCountriesSuccess(limit)); // prevLastId음..필요할까?
+    yield put(showActions.appendCountries(list));
   }
-
-  // yield put(loadCountriesSuccess(prevNextId + OFFSET)); // prevLastId음..필요할까?
-  yield put(loadCountriesSuccess(limit)); // prevLastId음..필요할까?
-  yield put(showActions.appendCountries(list));
 }
 
 // 나라 정보를 기본 세팅하는 [setCountries] 가 호출되었을 때 불리는 saga

@@ -14,14 +14,10 @@ const Search = () => {
   const { totalLength } = useSelector(({ database }) => database);
   const { keyword } = useSelector(({ search }) => search);
 
-  //   const updateDebounce = _.debounce(() => {
-  //     console.log('called');
-  //     dispatch(searchActions.setKeyword(innerText));
-  //   }, 5000);
-
   const searchData = keyword => {
     const searchResult = new Set();
     console.log('검색합니다: ', keyword);
+    console.log('searchData database:', database);
 
     const regexOnlyNumber = /^[0-9]*$/g;
     const regexOnlyString = /^[a-z]*$/g;
