@@ -18,7 +18,7 @@ const Informations = () => {
     if (database.length > 0) {
       loadData();
     }
-  }, [database]);
+  }, []);
 
   // useEffect(() => {
   //   searchData();
